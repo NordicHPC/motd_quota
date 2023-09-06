@@ -60,7 +60,15 @@ def parse_csv(csv_data):
     header = next(csv_reader)
 
     for row in csv_reader:
-        path, backup, space_used, space_quota, files, files_quota = row
+        if len(row) == 6: # Saga
+            path, backup, space_used, space_quota, files, files_quota = row
+        elif len(row) == 8:
+            # Fram & betzy return soft and hard quota.
+            # Soft quota is used for warning
+            path, backup, space_used, space_quota, _, files, files_quota, _ = row
+        else:
+            raise ValueError("Unkown number of fields in dusage csv output")
+
         parsed_data.append(
             {
                 "path": path,
