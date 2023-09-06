@@ -37,8 +37,12 @@ motd_quota
     Print warning on message of the day (MOTD) when space or number of files close to quota
 
 
-A longer description of your project goes here...
+    Do nothing when user is not close to quota.
+    Uses dusage_ to get data about used space/files and quotas.
 
+    Warining message and quota thresholds can be configured by editing `config.json`.
+
+.. _dusage: https://github.com/NordicHPC/dusage
 
 .. _pyscaffold-notes:
 

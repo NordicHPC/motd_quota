@@ -1,0 +1,7 @@
+{
+    "space_quota_warning": "\u001b[1;31m!!! Warning: Little storage space left in {path} \u001b[0;0m\n    Your folder {path} is close to the quota.\n    Check with `dusage` and see here for ways on how to solve it:\n    https://documentation.sigma2.no/files_storage/quota.html\n",
+    "files_quota_warning": "\u001b[1;31m!!! Warning: Too many files in {path} \u001b[0;0m\n    Your folder {path} is close to the number of files quota.\n    Check with `dusage` and see here for ways on how to solve it:\n    https://documentation.sigma2.no/files_storage/quota.html\n",
+    "space_warning_threshold": 0.9,
+    "files_warning_threshold": 0.9
+}
+

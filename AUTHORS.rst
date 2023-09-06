@@ -2,4 +2,4 @@
 Contributors
 ============
 
-* Joern Dietze <jdi010@uit.no>
+* Jørn Dietze <jdi010@uit.no>
