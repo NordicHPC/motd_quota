@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Version 0.2
+===========
+
+- Fix unit bug. "10 GiB" > "5 TiB" is now False as expected
+
 Version 0.1
 ===========
 

@@ -1,6 +1,22 @@
 import csv
 import json
+import re
 import subprocess
+
+
+def parse_unit(string):
+    """Parse strings like '2.2 TiB' and return float."""
+    unit_to_exponent = {
+        "KiB": 3,  # Kibi (2^10)
+        "MiB": 6,  # Mebi (2^20)
+        "GiB": 9,  # Gibi (2^30)
+        "TiB": 12,  # Tebi (2^40)
+        "PiB": 15,  # Peti (2^50)
+    }
+
+    value, unit = re.match(r"(\d+\.\d+)\s*([A-Za-z]+)", string).groups()
+    parsed_data = float(value) * (10 ** unit_to_exponent[unit])
+    return parsed_data
 
 
 def run_dusage():
@@ -82,8 +98,8 @@ def check_space_quota_warnings(data, warning_messages, warning_threshold):
     """
     for entry in data:
         if entry["space_quota"] != "-" and entry["space_used"] != "-":
-            space_used = float(entry["space_used"].split()[0])
-            space_quota = float(entry["space_quota"].split()[0])
+            space_used = parse_unit(entry["space_used"])
+            space_quota = parse_unit(entry["space_quota"])
             if space_used >= warning_threshold * space_quota:
                 print(
                     warning_messages["space_quota_warning"].format(path=entry["path"])
