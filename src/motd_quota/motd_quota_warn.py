@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 import csv
 import json
 import re
@@ -32,6 +34,7 @@ def run_dusage():
 
         if completed_process.returncode == 0:
             output = completed_process.stdout
+            return output
         else:
             print(
                 f"Error: Dusage command failed with return code {completed_process.returncode}"
@@ -39,7 +42,6 @@ def run_dusage():
             print(completed_process.stderr)
     except Exception as e:
         print(f"Error: {e}")
-    return output
 
 
 def parse_csv(csv_data):
