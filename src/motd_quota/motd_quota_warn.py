@@ -2,6 +2,7 @@
 
 import csv
 import json
+from pathlib import Path
 import re
 import subprocess
 
@@ -23,25 +24,14 @@ def parse_unit(string):
 
 def run_dusage():
     command = ("dusage --csv",)
-    try:
-        completed_process = subprocess.run(
-            command,
-            shell=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,  # Capture output as text
-        )
-
-        if completed_process.returncode == 0:
-            output = completed_process.stdout
-            return output
-        else:
-            print(
-                f"Error: Dusage command failed with return code {completed_process.returncode}"
-            )
-            print(completed_process.stderr)
-    except Exception as e:
-        print(f"Error: {e}")
+    completed_process = subprocess.run(
+        command,
+        shell=True,
+        check=True,
+        stdout=subprocess.PIPE,
+    )
+    output = completed_process.stdout.decode()
+    return output
 
 
 def parse_csv(csv_data):
@@ -57,10 +47,10 @@ def parse_csv(csv_data):
     parsed_data = []
     lines = csv_data.strip().split("\n")
     csv_reader = csv.reader(lines)
-    header = next(csv_reader)
+    _ = next(csv_reader) # skip header
 
     for row in csv_reader:
-        if len(row) == 6: # Saga
+        if len(row) == 6:  # Saga
             path, backup, space_used, space_quota, files, files_quota = row
         elif len(row) == 8:
             # Fram & betzy return soft and hard quota.
@@ -93,8 +83,10 @@ def load_warning_messages(config_file):
     Returns:
         dict: Dictionary containing warning messages.
     """
-    with open(config_file, "r") as f:
-        return json.load(f)
+    if not Path(config_file).exists():
+        raise ValueError("config.json has to be in same folder as script")
+    with open(config_file, "r", encoding="utf-8") as file:
+        return json.load(file)
 
 
 def check_space_quota_warnings(data, warning_messages, warning_threshold):
@@ -135,15 +127,18 @@ def check_files_quota_warnings(data, warning_messages, warning_threshold):
                 )
 
 
-def main(config_file="config.json"):
+def main():
     """Print warning if users quota is close to quota. Do nothing oherwise.
 
     Checks quotas for number of files and space used and compares against usage.
     Uses `dusage` to get data.
     """
+    config_file = "config.json"
+    config_path = Path(__file__).parent / config_file
+
     dusage_output = run_dusage()  # dusage output is csv formatted
     data = parse_csv(dusage_output)
-    warning_messages = load_warning_messages(config_file)
+    warning_messages = load_warning_messages(config_path)
 
     space_warning_threshold = warning_messages.get("space_warning_threshold", 0.9)
     files_warning_threshold = warning_messages.get("files_warning_threshold", 0.8)
